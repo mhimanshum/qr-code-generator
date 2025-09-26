@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Website QR Code Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      .card {
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+      }
+    </style>
+  </head>
+  <body class="min-h-screen bg-gray-50 text-gray-900">
+    <div class="max-w-3xl mx-auto px-4 py-10">
+      <header class="mb-8 text-center">
+        <h1 class="text-3xl md:text-4xl font-bold">
+          Website QR Code Generator
+        </h1>
+        <p class="text-gray-600 mt-2">
+          Enter a URL, customize, and export your QR as PNG.
+        </p>
+      </header>
+
+      <div class="grid md:grid-cols-2 gap-6 items-start">
+        <!-- Controls -->
+        <section class="card bg-white rounded-2xl p-5 md:p-6">
+          <label class="block text-sm font-medium mb-1" for="url"
+            >Website URL</label
+          >
+          <input
+            id="url"
+            type="url"
+            placeholder="https://example.com"
+            value="https://example.com"
+            class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
+
+          <div class="grid grid-cols-2 gap-4 mt-4">
+            <div>
+              <label class="block text-sm font-medium mb-1" for="size"
+                >Size (px)</label
+              >
+              <input
+                id="size"
+                type="range"
+                min="128"
+                max="512"
+                step="16"
+                value="256"
+                class="w-full"
+              />
+              <div class="text-xs text-gray-500 mt-1">
+                <span id="sizeValue">256</span> px
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1" for="level"
+                >Error Correction</label
+              >
+              <select
+                id="level"
+                class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="L">L (7%)</option>
+                <option value="M" selected>M (15%)</option>
+                <option value="Q">Q (25%)</option>
+                <option value="H">H (30%)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 mt-4">
+            <div>
+              <label class="block text-sm font-medium mb-1" for="colorDark"
+                >Foreground</label
+              >
+              <input
+                id="colorDark"
+                type="color"
+                value="#000000"
+                class="w-full h-10 p-1 rounded-lg border border-gray-300 cursor-pointer"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1" for="colorLight"
+                >Background</label
+              >
+              <input
+                id="colorLight"
+                type="color"
+                value="#ffffff"
+                class="w-full h-10 p-1 rounded-lg border border-gray-300 cursor-pointer"
+              />
+              <div class="flex items-center gap-2 mt-2">
+                <input type="checkbox" id="transparentBg" class="cursor-pointer">
+                <label for="transparentBg" class="text-sm text-gray-600">Transparent Background</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-3 mt-6">
+            <button
+              id="generate"
+              class="px-4 py-2 rounded-xl font-semibold bg-indigo-600 text-white hover:bg-indigo-700 active:scale-[.98]"
+            >
+              Generate
+            </button>
+            <button
+              id="clear"
+              class="px-4 py-2 rounded-xl font-semibold bg-gray-100 hover:bg-gray-200"
+            >
+              Clear
+            </button>
+            <button
+              id="download"
+              class="px-4 py-2 rounded-xl font-semibold bg-emerald-600 text-white hover:bg-emerald-700"
+              disabled
+            >
+              Download PNG
+            </button>
+          </div>
+
+          <div class="mt-4">
+            <p class="text-sm font-medium">Examples / Tests</p>
+            <div class="flex gap-2 mt-2">
+              <button id="ex1" class="px-3 py-1 rounded-md bg-gray-100">
+                example.com
+              </button>
+              <button id="ex2" class="px-3 py-1 rounded-md bg-gray-100">
+                openai.com
+              </button>
+              <button id="ex3" class="px-3 py-1 rounded-md bg-gray-100">
+                github.com
+              </button>
+            </div>
+            <p class="text-xs text-gray-500 mt-2">
+              Click an example to populate the URL and generate — useful as a
+              quick test.
+            </p>
+          </div>
+        </section>
+
+        <!-- Preview -->
+        <section
+          class="card bg-white rounded-2xl p-5 md:p-6 flex flex-col items-center justify-center min-h-[360px]"
+        >
+          <div
+            id="qrContainer"
+            class="bg-white p-4 rounded-xl border border-dashed border-gray-300 w-full flex items-center justify-center min-h-[300px]"
+          ></div>
+          <p id="qrHint" class="text-sm text-gray-500 mt-3">
+            Your QR preview will appear here.
+          </p>
+        </section>
+      </div>
+
+      <footer class="text-center text-xs text-gray-500 mt-8">
+        Built with QRCode.js • Works fully offline after load
+      </footer>
+    </div>
+
+    <!-- QRCode.js -->
+    <script src="qrcode.min.js"></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const sizeEl = document.getElementById("size");
+        const sizeValueEl = document.getElementById("sizeValue");
+        const urlEl = document.getElementById("url");
+        const levelEl = document.getElementById("level");
+        const colorDarkEl = document.getElementById("colorDark");
+        const colorLightEl = document.getElementById("colorLight");
+        const transparentBgEl = document.getElementById("transparentBg");
+        const qrContainer = document.getElementById("qrContainer");
+        const btnGenerate = document.getElementById("generate");
+        const btnClear = document.getElementById("clear");
+        const btnDownload = document.getElementById("download");
+        const qrHint = document.getElementById("qrHint");
+
+        const ex1 = document.getElementById("ex1");
+        const ex2 = document.getElementById("ex2");
+        const ex3 = document.getElementById("ex3");
+
+        let qrcodeInstance = null;
+
+        sizeEl.addEventListener(
+          "input",
+          () => (sizeValueEl.textContent = sizeEl.value)
+        );
+
+        function clearQR() {
+          qrContainer.innerHTML = "";
+          qrcodeInstance = null;
+          btnDownload.disabled = true;
+          qrHint.textContent = "Your QR preview will appear here.";
+        }
+
+        function generateQR() {
+          let text = urlEl.value.trim();
+          if (!text) return alert("Please enter a website URL.");
+
+          // auto-prepend protocol if missing
+          if (!/^https?:\/\//i.test(text)) {
+            text = "https://" + text;
+            urlEl.value = text;
+          }
+
+          const size = parseInt(sizeEl.value, 10) || 256;
+          const colorDark = colorDarkEl.value || "#000000";
+          const colorLight = transparentBgEl.checked
+            ? "transparent"
+            : colorLightEl.value || "#ffffff";
+          const correctLevel =
+            QRCode.CorrectLevel[levelEl.value] || QRCode.CorrectLevel.M;
+
+          clearQR();
+
+          qrcodeInstance = new QRCode(qrContainer, {
+            text,
+            width: size,
+            height: size,
+            colorDark,
+            colorLight,
+            correctLevel,
+          });
+
+          // check when rendered
+          setTimeout(() => {
+            const canvas = qrContainer.querySelector("canvas");
+            const img = qrContainer.querySelector("img");
+            if (canvas || img) {
+              btnDownload.disabled = false;
+              qrHint.textContent = "";
+            }
+          }, 300);
+        }
+
+        function downloadPNG() {
+          const canvas = qrContainer.querySelector("canvas");
+          const img = qrContainer.querySelector("img");
+          let link = document.createElement("a");
+          link.download = "qr-code.png";
+
+          if (canvas) {
+            link.href = canvas.toDataURL("image/png");
+          } else if (img && img.src) {
+            link.href = img.src;
+          } else {
+            return alert("No QR code found to download.");
+          }
+          link.click();
+        }
+
+        // example buttons
+        ex1.addEventListener("click", () => {
+          urlEl.value = "https://example.com";
+          generateQR();
+        });
+        ex2.addEventListener("click", () => {
+          urlEl.value = "https://openai.com";
+          generateQR();
+        });
+        ex3.addEventListener("click", () => {
+          urlEl.value = "https://github.com";
+          generateQR();
+        });
+
+        btnGenerate.addEventListener("click", generateQR);
+        btnClear.addEventListener("click", clearQR);
+        btnDownload.addEventListener("click", downloadPNG);
+
+        // initial render
+        generateQR();
+      });
+    </script>
+  </body>
+</html>
