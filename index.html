@@ -521,7 +521,7 @@
           style,
           cornerRadiusPercent,
           darkColor,
-          lightColor,
+          centerColor,
         ) {
           const outer = 7 * cellSize;
           const middle = 5 * cellSize;
@@ -553,7 +553,7 @@
           drawRoundedRect(ctx, startX, startY, outer, outer, outerRadius);
           ctx.fill();
 
-          ctx.fillStyle = lightColor;
+          ctx.fillStyle = centerColor;
           drawRoundedRect(
             ctx,
             startX + cellSize,
@@ -622,6 +622,8 @@
             transparentBgEl.checked ?
               "rgba(255,255,255,0)"
             : colorLightEl.value || "#ffffff";
+          const eyeCenterColor =
+            transparentBgEl.checked ? "#ffffff" : colorLight;
           const moduleStyle = moduleShapeEl.value;
           const eyeStyle = eyeShapeEl.value;
           const eyeCount = Math.max(
@@ -694,7 +696,7 @@
             eyeStyle,
             cornerRadiusPercent,
             colorDark,
-            colorLight,
+            eyeCenterColor,
           );
 
           if (eyeCount >= 2) {
@@ -706,7 +708,7 @@
               eyeStyle,
               cornerRadiusPercent,
               colorDark,
-              colorLight,
+              eyeCenterColor,
             );
           }
 
@@ -719,7 +721,7 @@
               eyeStyle,
               cornerRadiusPercent,
               colorDark,
-              colorLight,
+              eyeCenterColor,
             );
           }
 
@@ -732,7 +734,7 @@
               eyeStyle,
               cornerRadiusPercent,
               colorDark,
-              colorLight,
+              eyeCenterColor,
             );
           }
 
