@@ -6,8 +6,39 @@
     <title>Website QR Code Generator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+      :root {
+        --panel-shadow: 0 20px 45px rgba(15, 23, 42, 0.1);
+      }
+
+      body {
+        background:
+          radial-gradient(
+            circle at top left,
+            rgba(79, 70, 229, 0.08),
+            transparent 32%
+          ),
+          radial-gradient(
+            circle at top right,
+            rgba(16, 185, 129, 0.08),
+            transparent 28%
+          ),
+          #f8fafc;
+      }
+
       .card {
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        box-shadow: var(--panel-shadow);
+      }
+
+      .control-label {
+        letter-spacing: 0.02em;
+      }
+
+      .preview-shell {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.95),
+          rgba(241, 245, 249, 0.95)
+        );
       }
     </style>
   </head>
@@ -25,7 +56,23 @@
       <div class="grid md:grid-cols-2 gap-6 items-start">
         <!-- Controls -->
         <section class="card bg-white rounded-2xl p-5 md:p-6">
-          <label class="block text-sm font-medium mb-1" for="url"
+          <div class="flex items-start justify-between gap-4 mb-5">
+            <div>
+              <p
+                class="text-xs uppercase tracking-[0.28em] text-indigo-500 font-semibold"
+              >
+                Customizer
+              </p>
+              <h2 class="text-xl font-semibold text-slate-900 mt-1">
+                Design your QR
+              </h2>
+              <p class="text-sm text-slate-500 mt-1">
+                Set alignment, module style, and export size in one place.
+              </p>
+            </div>
+          </div>
+
+          <label class="block text-sm font-medium mb-1 control-label" for="url"
             >Website URL</label
           >
           <input
@@ -38,7 +85,9 @@
 
           <div class="grid grid-cols-2 gap-4 mt-4">
             <div>
-              <label class="block text-sm font-medium mb-1" for="size"
+              <label
+                class="block text-sm font-medium mb-1 control-label"
+                for="size"
                 >Size (px)</label
               >
               <input
@@ -55,7 +104,9 @@
               </div>
             </div>
             <div>
-              <label class="block text-sm font-medium mb-1" for="level"
+              <label
+                class="block text-sm font-medium mb-1 control-label"
+                for="level"
                 >Error Correction</label
               >
               <select
@@ -72,7 +123,188 @@
 
           <div class="grid grid-cols-2 gap-4 mt-4">
             <div>
-              <label class="block text-sm font-medium mb-1" for="colorDark"
+              <label
+                class="block text-sm font-medium mb-1 control-label"
+                for="alignX"
+                >Horizontal Align</label
+              >
+              <select
+                id="alignX"
+                class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="left">Left</option>
+                <option value="center" selected>Center</option>
+                <option value="right">Right</option>
+              </select>
+            </div>
+            <div>
+              <label
+                class="block text-sm font-medium mb-1 control-label"
+                for="alignY"
+                >Vertical Align</label
+              >
+              <select
+                id="alignY"
+                class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="top">Top</option>
+                <option value="center" selected>Middle</option>
+                <option value="bottom">Bottom</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 mt-4">
+            <div>
+              <label
+                class="block text-sm font-medium mb-1 control-label"
+                for="moduleShape"
+                >Dot Style</label
+              >
+              <select
+                id="moduleShape"
+                class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="square">Square</option>
+                <option value="rounded" selected>Rounded</option>
+                <option value="soft">Soft Rounded</option>
+              </select>
+            </div>
+            <div>
+              <label
+                class="block text-sm font-medium mb-1 control-label"
+                for="eyeShape"
+                >Corner Eye Style</label
+              >
+              <select
+                id="eyeShape"
+                class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="square">Square</option>
+                <option value="rounded" selected>Rounded</option>
+                <option value="circle">Circle</option>
+                <option value="radius">Radius</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <label
+              class="block text-sm font-medium mb-1 control-label"
+              for="eyeCount"
+              >Corner Eye Count</label
+            >
+            <select
+              id="eyeCount"
+              class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3" selected>3</option>
+              <option value="4">4</option>
+            </select>
+            <p class="text-xs text-gray-500 mt-1">
+              Corner eyes are placed from top-left clockwise. Select 4 to place
+              eyes in all four corners.
+            </p>
+          </div>
+
+          <div id="cornerRadiusWrap" class="mt-4 hidden">
+            <label
+              class="block text-sm font-medium mb-1 control-label"
+              for="cornerRadius"
+              >Corner Round / Radius</label
+            >
+            <input
+              id="cornerRadius"
+              type="range"
+              min="0"
+              max="100"
+              step="1"
+              value="60"
+              class="w-full"
+            />
+            <div class="text-xs text-gray-500 mt-1">
+              <span id="cornerRadiusValue">60</span>%
+            </div>
+          </div>
+
+          <p class="text-xs text-gray-500 mt-4">
+            This applies the selected corner eye style to the corners you
+            choose.
+          </p>
+
+          <div class="mt-4">
+            <label class="inline-flex items-center gap-2 cursor-pointer">
+              <input
+                id="borderEnabled"
+                type="checkbox"
+                class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+              />
+              <span class="text-sm font-medium control-label">Border</span>
+            </label>
+          </div>
+
+          <div id="borderOptions" class="grid grid-cols-2 gap-4 mt-4 hidden">
+            <div>
+              <label
+                class="block text-sm font-medium mb-1 control-label"
+                for="borderColor"
+                >Border Color</label
+              >
+              <input
+                id="borderColor"
+                type="color"
+                value="#111827"
+                class="w-full h-10 p-1 rounded-lg border border-gray-300 cursor-pointer"
+              />
+            </div>
+            <div>
+              <label
+                class="block text-sm font-medium mb-1 control-label"
+                for="borderGap"
+                >Border Gap</label
+              >
+              <input
+                id="borderGap"
+                type="range"
+                min="0"
+                max="64"
+                step="2"
+                value="16"
+                class="w-full"
+              />
+              <div class="text-xs text-gray-500 mt-1">
+                <span id="borderGapValue">16</span> px
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <label
+              class="block text-sm font-medium mb-1 control-label"
+              for="quietZone"
+              >Padding / Quiet Zone</label
+            >
+            <input
+              id="quietZone"
+              type="range"
+              min="12"
+              max="64"
+              step="4"
+              value="24"
+              class="w-full"
+            />
+            <div class="text-xs text-gray-500 mt-1">
+              <span id="quietZoneValue">24</span> px
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 mt-4">
+            <div>
+              <label
+                class="block text-sm font-medium mb-1 control-label"
+                for="colorDark"
                 >Foreground</label
               >
               <input
@@ -83,7 +315,9 @@
               />
             </div>
             <div>
-              <label class="block text-sm font-medium mb-1" for="colorLight"
+              <label
+                class="block text-sm font-medium mb-1 control-label"
+                for="colorLight"
                 >Background</label
               >
               <input
@@ -93,8 +327,14 @@
                 class="w-full h-10 p-1 rounded-lg border border-gray-300 cursor-pointer"
               />
               <div class="flex items-center gap-2 mt-2">
-                <input type="checkbox" id="transparentBg" class="cursor-pointer">
-                <label for="transparentBg" class="text-sm text-gray-600">Transparent Background</label>
+                <input
+                  type="checkbox"
+                  id="transparentBg"
+                  class="cursor-pointer"
+                />
+                <label for="transparentBg" class="text-sm text-gray-600"
+                  >Transparent Background</label
+                >
               </div>
             </div>
           </div>
@@ -143,12 +383,17 @@
 
         <!-- Preview -->
         <section
-          class="card bg-white rounded-2xl p-5 md:p-6 flex flex-col items-center justify-center min-h-[360px]"
+          class="card preview-shell bg-white rounded-2xl p-5 md:p-6 flex flex-col items-center justify-center min-h-[360px]"
         >
           <div
             id="qrContainer"
             class="bg-white p-4 rounded-xl border border-dashed border-gray-300 w-full flex items-center justify-center min-h-[300px]"
-          ></div>
+          >
+            <canvas
+              id="qrCanvas"
+              class="block mx-auto max-w-full h-auto hidden"
+            ></canvas>
+          </div>
           <p id="qrHint" class="text-sm text-gray-500 mt-3">
             Your QR preview will appear here.
           </p>
@@ -167,12 +412,29 @@
       document.addEventListener("DOMContentLoaded", () => {
         const sizeEl = document.getElementById("size");
         const sizeValueEl = document.getElementById("sizeValue");
+        const quietZoneEl = document.getElementById("quietZone");
+        const quietZoneValueEl = document.getElementById("quietZoneValue");
         const urlEl = document.getElementById("url");
         const levelEl = document.getElementById("level");
+        const alignXEl = document.getElementById("alignX");
+        const alignYEl = document.getElementById("alignY");
+        const moduleShapeEl = document.getElementById("moduleShape");
+        const eyeShapeEl = document.getElementById("eyeShape");
+        const eyeCountEl = document.getElementById("eyeCount");
+        const cornerRadiusWrapEl = document.getElementById("cornerRadiusWrap");
+        const cornerRadiusEl = document.getElementById("cornerRadius");
+        const cornerRadiusValueEl =
+          document.getElementById("cornerRadiusValue");
+        const borderEnabledEl = document.getElementById("borderEnabled");
+        const borderOptionsEl = document.getElementById("borderOptions");
+        const borderColorEl = document.getElementById("borderColor");
+        const borderGapEl = document.getElementById("borderGap");
+        const borderGapValueEl = document.getElementById("borderGapValue");
         const colorDarkEl = document.getElementById("colorDark");
         const colorLightEl = document.getElementById("colorLight");
         const transparentBgEl = document.getElementById("transparentBg");
         const qrContainer = document.getElementById("qrContainer");
+        const qrCanvas = document.getElementById("qrCanvas");
         const btnGenerate = document.getElementById("generate");
         const btnClear = document.getElementById("clear");
         const btnDownload = document.getElementById("download");
@@ -186,11 +448,303 @@
 
         sizeEl.addEventListener(
           "input",
-          () => (sizeValueEl.textContent = sizeEl.value)
+          () => (sizeValueEl.textContent = sizeEl.value),
         );
+
+        quietZoneEl.addEventListener(
+          "input",
+          () => (quietZoneValueEl.textContent = quietZoneEl.value),
+        );
+
+        cornerRadiusEl.addEventListener(
+          "input",
+          () => (cornerRadiusValueEl.textContent = cornerRadiusEl.value),
+        );
+
+        borderGapEl.addEventListener(
+          "input",
+          () => (borderGapValueEl.textContent = borderGapEl.value),
+        );
+
+        function hexToRgb(hex) {
+          const normalized = hex.replace("#", "");
+          const value =
+            normalized.length === 3 ?
+              normalized
+                .split("")
+                .map((char) => char + char)
+                .join("")
+            : normalized;
+          const number = parseInt(value, 16);
+          return {
+            r: (number >> 16) & 255,
+            g: (number >> 8) & 255,
+            b: number & 255,
+          };
+        }
+
+        function drawRoundedRect(ctx, x, y, width, height, radius) {
+          const r = Math.min(radius, width / 2, height / 2);
+          ctx.beginPath();
+          ctx.moveTo(x + r, y);
+          ctx.arcTo(x + width, y, x + width, y + height, r);
+          ctx.arcTo(x + width, y + height, x, y + height, r);
+          ctx.arcTo(x, y + height, x, y, r);
+          ctx.arcTo(x, y, x + width, y, r);
+          ctx.closePath();
+        }
+
+        function drawModule(ctx, x, y, cellSize, style) {
+          if (style === "square") {
+            ctx.fillRect(x, y, cellSize, cellSize);
+            return;
+          }
+
+          const inset = style === "soft" ? cellSize * 0.08 : cellSize * 0.14;
+          const radius = style === "soft" ? cellSize * 0.32 : cellSize * 0.42;
+          drawRoundedRect(
+            ctx,
+            x + inset,
+            y + inset,
+            cellSize - inset * 2,
+            cellSize - inset * 2,
+            radius,
+          );
+          ctx.fill();
+        }
+
+        function drawFinderEye(
+          ctx,
+          startX,
+          startY,
+          cellSize,
+          style,
+          cornerRadiusPercent,
+          darkColor,
+          lightColor,
+        ) {
+          const outer = 7 * cellSize;
+          const middle = 5 * cellSize;
+          const inner = 3 * cellSize;
+          const isCircle = style === "circle";
+          const isRadius = style === "radius";
+          const radiusFactor =
+            Math.max(0, Math.min(100, cornerRadiusPercent || 60)) / 100;
+          const radiusOuter = cellSize * (0.8 + radiusFactor * 1.2);
+          const radiusMiddle = cellSize * (0.55 + radiusFactor * 0.85);
+          const radiusInner = cellSize * (0.35 + radiusFactor * 0.55);
+          const outerRadius =
+            isCircle ? outer / 2
+            : isRadius ? radiusOuter
+            : style === "rounded" ? cellSize * 1.6
+            : cellSize * 0.35;
+          const middleRadius =
+            isCircle ? middle / 2
+            : isRadius ? radiusMiddle
+            : style === "rounded" ? cellSize * 1.1
+            : cellSize * 0.25;
+          const innerRadius =
+            isCircle ? inner / 2
+            : isRadius ? radiusInner
+            : style === "rounded" ? cellSize * 0.85
+            : cellSize * 0.2;
+
+          ctx.fillStyle = darkColor;
+          drawRoundedRect(ctx, startX, startY, outer, outer, outerRadius);
+          ctx.fill();
+
+          ctx.fillStyle = lightColor;
+          drawRoundedRect(
+            ctx,
+            startX + cellSize,
+            startY + cellSize,
+            middle,
+            middle,
+            middleRadius,
+          );
+          ctx.fill();
+
+          ctx.fillStyle = darkColor;
+          drawRoundedRect(
+            ctx,
+            startX + cellSize * 2,
+            startY + cellSize * 2,
+            inner,
+            inner,
+            innerRadius,
+          );
+          ctx.fill();
+        }
+
+        function getCornerEyes(moduleCount, cellSize, offsetX, offsetY) {
+          const last = moduleCount - 7;
+          return [
+            { x: offsetX, y: offsetY },
+            { x: offsetX + last * cellSize, y: offsetY },
+            { x: offsetX, y: offsetY + last * cellSize },
+            { x: offsetX + last * cellSize, y: offsetY + last * cellSize },
+          ];
+        }
+
+        function alignOffset(space, alignment) {
+          if (alignment === "left" || alignment === "top") return 0;
+          if (alignment === "right" || alignment === "bottom") return space;
+          return space / 2;
+        }
+
+        function updateCornerRadiusVisibility() {
+          const showRadius = eyeShapeEl.value === "radius";
+          cornerRadiusWrapEl.classList.toggle("hidden", !showRadius);
+        }
+
+        eyeShapeEl.addEventListener("change", () => {
+          updateCornerRadiusVisibility();
+          if (qrcodeInstance && qrcodeInstance._oQRCode) {
+            renderQR();
+          }
+        });
+
+        function renderQR() {
+          if (!qrcodeInstance || !qrcodeInstance._oQRCode) return;
+
+          const matrix = qrcodeInstance._oQRCode;
+          const moduleCount = matrix.getModuleCount();
+          const qrSize = parseInt(sizeEl.value, 10) || 256;
+          const padding = parseInt(quietZoneEl.value, 10) || 24;
+          const borderEnabled = borderEnabledEl.checked;
+          const borderGap =
+            borderEnabled ? parseInt(borderGapEl.value, 10) || 0 : 0;
+          const borderThickness = borderEnabled ? 4 : 0;
+          const canvasSize =
+            qrSize + padding * 2 + borderGap * 2 + borderThickness * 2;
+          const colorDark = colorDarkEl.value || "#000000";
+          const colorLight =
+            transparentBgEl.checked ?
+              "rgba(255,255,255,0)"
+            : colorLightEl.value || "#ffffff";
+          const moduleStyle = moduleShapeEl.value;
+          const eyeStyle = eyeShapeEl.value;
+          const eyeCount = Math.max(
+            1,
+            Math.min(4, parseInt(eyeCountEl.value, 10) || 3),
+          );
+          const cornerRadiusPercent = parseInt(cornerRadiusEl.value, 10) || 60;
+          const borderColor = borderColorEl.value || "#111827";
+
+          qrCanvas.width = canvasSize;
+          qrCanvas.height = canvasSize;
+          qrCanvas.classList.remove("hidden");
+
+          const ctx = qrCanvas.getContext("2d");
+          ctx.clearRect(0, 0, canvasSize, canvasSize);
+          ctx.fillStyle = colorLight;
+          ctx.fillRect(0, 0, canvasSize, canvasSize);
+
+          if (borderEnabled) {
+            ctx.strokeStyle = borderColor;
+            ctx.lineWidth = borderThickness;
+            const borderRectX = borderGap + borderThickness / 2;
+            const borderRectY = borderGap + borderThickness / 2;
+            const borderRectSize = qrSize + padding * 2;
+            drawRoundedRect(
+              ctx,
+              borderRectX,
+              borderRectY,
+              borderRectSize,
+              borderRectSize,
+              18,
+            );
+            ctx.stroke();
+          }
+
+          const cellSize = qrSize / moduleCount;
+          const offsetX =
+            borderGap +
+            borderThickness +
+            padding +
+            alignOffset(0, alignXEl.value);
+          const offsetY =
+            borderGap +
+            borderThickness +
+            padding +
+            alignOffset(0, alignYEl.value);
+          const cornerEyes = getCornerEyes(
+            moduleCount,
+            cellSize,
+            offsetX,
+            offsetY,
+          );
+
+          for (let row = 0; row < moduleCount; row++) {
+            for (let col = 0; col < moduleCount; col++) {
+              if (!matrix.isDark(row, col)) continue;
+
+              const x = offsetX + col * cellSize;
+              const y = offsetY + row * cellSize;
+              ctx.fillStyle = colorDark;
+              drawModule(ctx, x, y, cellSize, moduleStyle);
+            }
+          }
+
+          drawFinderEye(
+            ctx,
+            cornerEyes[0].x,
+            cornerEyes[0].y,
+            cellSize,
+            eyeStyle,
+            cornerRadiusPercent,
+            colorDark,
+            colorLight,
+          );
+
+          if (eyeCount >= 2) {
+            drawFinderEye(
+              ctx,
+              cornerEyes[1].x,
+              cornerEyes[1].y,
+              cellSize,
+              eyeStyle,
+              cornerRadiusPercent,
+              colorDark,
+              colorLight,
+            );
+          }
+
+          if (eyeCount >= 3) {
+            drawFinderEye(
+              ctx,
+              cornerEyes[2].x,
+              cornerEyes[2].y,
+              cellSize,
+              eyeStyle,
+              cornerRadiusPercent,
+              colorDark,
+              colorLight,
+            );
+          }
+
+          if (eyeCount >= 4) {
+            drawFinderEye(
+              ctx,
+              cornerEyes[3].x,
+              cornerEyes[3].y,
+              cellSize,
+              eyeStyle,
+              cornerRadiusPercent,
+              colorDark,
+              colorLight,
+            );
+          }
+
+          qrContainer.innerHTML = "";
+          qrContainer.appendChild(qrCanvas);
+          qrHint.textContent = "";
+          btnDownload.disabled = false;
+        }
 
         function clearQR() {
           qrContainer.innerHTML = "";
+          qrCanvas.classList.add("hidden");
           qrcodeInstance = null;
           btnDownload.disabled = true;
           qrHint.textContent = "Your QR preview will appear here.";
@@ -208,15 +762,17 @@
 
           const size = parseInt(sizeEl.value, 10) || 256;
           const colorDark = colorDarkEl.value || "#000000";
-          const colorLight = transparentBgEl.checked
-            ? "transparent"
-            : colorLightEl.value || "#ffffff";
+          const colorLight =
+            transparentBgEl.checked ? "transparent" : (
+              colorLightEl.value || "#ffffff"
+            );
           const correctLevel =
             QRCode.CorrectLevel[levelEl.value] || QRCode.CorrectLevel.M;
 
           clearQR();
 
-          qrcodeInstance = new QRCode(qrContainer, {
+          const scratchHost = document.createElement("div");
+          qrcodeInstance = new QRCode(scratchHost, {
             text,
             width: size,
             height: size,
@@ -225,27 +781,16 @@
             correctLevel,
           });
 
-          // check when rendered
-          setTimeout(() => {
-            const canvas = qrContainer.querySelector("canvas");
-            const img = qrContainer.querySelector("img");
-            if (canvas || img) {
-              btnDownload.disabled = false;
-              qrHint.textContent = "";
-            }
-          }, 300);
+          setTimeout(renderQR, 0);
         }
 
         function downloadPNG() {
-          const canvas = qrContainer.querySelector("canvas");
-          const img = qrContainer.querySelector("img");
+          const canvas = qrCanvas;
           let link = document.createElement("a");
           link.download = "qr-code.png";
 
-          if (canvas) {
+          if (canvas && canvas.width) {
             link.href = canvas.toDataURL("image/png");
-          } else if (img && img.src) {
-            link.href = img.src;
           } else {
             return alert("No QR code found to download.");
           }
@@ -270,7 +815,39 @@
         btnClear.addEventListener("click", clearQR);
         btnDownload.addEventListener("click", downloadPNG);
 
+        borderEnabledEl.addEventListener("change", () => {
+          borderOptionsEl.classList.toggle("hidden", !borderEnabledEl.checked);
+          if (qrcodeInstance && qrcodeInstance._oQRCode) {
+            renderQR();
+          }
+        });
+
+        [
+          alignXEl,
+          alignYEl,
+          moduleShapeEl,
+          eyeShapeEl,
+          eyeCountEl,
+          cornerRadiusEl,
+          quietZoneEl,
+          borderGapEl,
+          borderColorEl,
+          colorDarkEl,
+          colorLightEl,
+          transparentBgEl,
+          sizeEl,
+        ].forEach((input) =>
+          input.addEventListener("input", () => {
+            if (qrcodeInstance && qrcodeInstance._oQRCode) {
+              renderQR();
+            }
+          }),
+        );
+
         // initial render
+        updateCornerRadiusVisibility();
+        borderOptionsEl.classList.toggle("hidden", !borderEnabledEl.checked);
+        borderGapValueEl.textContent = borderGapEl.value;
         generateQR();
       });
     </script>
